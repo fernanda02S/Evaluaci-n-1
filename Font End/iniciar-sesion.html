@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Historia de un Lobo</title>
+    <meta name="description" content="Inicia sesión o regístrate para unirte a la manada y conocer la historia del lobo.">
+    <link rel="stylesheet" href="lobo.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body class="pagina-formulario">
+    <div class="superposicion-formulario"></div>
+    <div class="contenedor-formulario-principal">
+        <div class="tarjeta-formulario cristal">
+            <h2 class="titulo-formulario">Únete a la Manada</h2>
+            <p class="subtitulo-formulario">Ingresa tus datos de explorador para continuar el viaje</p>
+            
+            <form id="form-registro" novalidate>
+                <div class="grupo-campo">
+                    <label for="nombre">Nombre completo</label>
+                    <div class="entrada-contenedor">
+                        <input type="text" id="nombre" name="nombre" required autocomplete="nombre" placeholder="Ej. Juan Pérez">
+                        <span class="error-mensaje" id="error-nombre"></span>
+                    </div>
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="correo">Correo electrónico</label>
+                    <div class="entrada-contenedor">
+                        <input type="email" id="correo" name="correo" required autocomplete="correo" placeholder="correo@ejemplo.com">
+                        <span class="error-mensaje" id="error-correo"></span>
+                    </div>
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="direccion">Dirección</label>
+                    <div class="entrada-contenedor">
+                        <input type="text" id="direccion" name="direccion" required autocomplete="direccion" placeholder="Ej. Av. Siempre Viva 742">
+                        <span class="error-mensaje" id="error-direccion"></span>
+                    </div>
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="telefono">Número de teléfono</label>
+                    <div class="entrada-contenedor">
+                        <input type="tel" id="telefono" name="telefono" required autocomplete="telefono" placeholder="Ej. +56 9 1234 5678">
+                        <span class="error-mensaje" id="error-telefono"></span>
+                    </div>
+                </div>
+
+                <div class="acciones-formulario">
+                    <button type="submit" class="boton-enviar">Enviar</button>
+                    <a href="lobo.html" class="boton-volver">Volver al Inicio</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('form-registro');
+            const inputNombre = document.getElementById('nombre');
+            const inputCorreo = document.getElementById('correo');
+            const inputDireccion = document.getElementById('direccion');
+            const inputTelefono = document.getElementById('telefono');
+
+            const errorNombre = document.getElementById('error-nombre');
+            const errorCorreo = document.getElementById('error-correo');
+            const errorDireccion = document.getElementById('error-direccion');
+            const errorTelefono = document.getElementById('error-telefono');
+
+            const regexNombrePermitido = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+
+            inputNombre.addEventListener('keypress', (e) => {
+                if (e.key.length === 1 && !regexNombrePermitido.test(e.key)) {
+                    e.preventDefault();
+                    mostrarError(inputNombre, errorNombre, "No se permiten números ni caracteres especiales como *+}{\"! 1234@");
+                    inputNombre.classList.add('entrada-invalida-temp');
+                    setTimeout(() => inputNombre.classList.remove('entrada-invalida-temp'), 500);
+                }
+            });
+
+            inputNombre.addEventListener('input', () => {
+                const valor = inputNombre.value;
+                const limpio = valor.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+                if (valor !== limpio) {
+                    inputNombre.value = limpio;
+                    mostrarError(inputNombre, errorNombre, "No se permiten números ni caracteres especiales como *+}{\"! 1234@");
+                } else if (limpio.trim().length === 0) {
+                    mostrarError(inputNombre, errorNombre, "El nombre completo es obligatorio.");
+                } else if (limpio.trim().length < 3) {
+                    mostrarError(inputNombre, errorNombre, "El nombre debe tener al menos 3 caracteres.");
+                } else {
+                    limpiarError(inputNombre, errorNombre);
+                }
+            });
+
+            inputCorreo.addEventListener('input', () => {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!inputCorreo.value) {
+                    mostrarError(inputCorreo, errorCorreo, "El correo electrónico es obligatorio.");
+                } else if (!emailRegex.test(inputCorreo.value)) {
+                    mostrarError(inputCorreo, errorCorreo, "Por favor, ingresa un correo electrónico válido.");
+                } else {
+                    limpiarError(inputCorreo, errorCorreo);
+                }
+            });
+
+            inputDireccion.addEventListener('input', () => {
+                if (!inputDireccion.value.trim()) {
+                    mostrarError(inputDireccion, errorDireccion, "La dirección es obligatoria.");
+                } else {
+                    limpiarError(inputDireccion, errorDireccion);
+                }
+            });
+
+            inputTelefono.addEventListener('input', () => {
+                const telRegex = /^\+?[0-9\s\-()]{6,20}$/;
+                if (!inputTelefono.value.trim()) {
+                    mostrarError(inputTelefono, errorTelefono, "El número de teléfono es obligatorio.");
+                } else if (!telRegex.test(inputTelefono.value.trim())) {
+                    mostrarError(inputTelefono, errorTelefono, "Ingresa un número de teléfono válido (Ej: +56 9 1234 5678).");
+                } else {
+                    limpiarError(inputTelefono, errorTelefono);
+                }
+            });
+
+            function mostrarError(input, errorElement, mensaje) {
+                input.classList.add('error-input');
+                input.classList.remove('valido-input');
+                errorElement.textContent = mensaje;
+                errorElement.style.opacity = 1;
+            }
+
+            function limpiarError(input, errorElement) {
+                input.classList.remove('error-input');
+                if (input.value.trim()) {
+                    input.classList.add('valido-input');
+                } else {
+                    input.classList.remove('valido-input');
+                }
+                errorElement.textContent = "";
+                errorElement.style.opacity = 0;
+            }
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                let esValido = true;
+
+                if (!inputNombre.value.trim()) {
+                    mostrarError(inputNombre, errorNombre, "El nombre completo es obligatorio.");
+                    esValido = false;
+                } else if (!regexNombrePermitido.test(inputNombre.value)) {
+                    mostrarError(inputNombre, errorNombre, "El nombre contiene caracteres inválidos.");
+                    esValido = false;
+                }
+
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!inputCorreo.value) {
+                    mostrarError(inputCorreo, errorCorreo, "El correo electrónico es obligatorio.");
+                    esValido = false;
+                } else if (!emailRegex.test(inputCorreo.value)) {
+                    mostrarError(inputCorreo, errorCorreo, "Por favor, ingresa un correo electrónico válido.");
+                    esValido = false;
+                }
+
+                if (!inputDireccion.value.trim()) {
+                    mostrarError(inputDireccion, errorDireccion, "La dirección es obligatoria.");
+                    esValido = false;
+                }
+
+                const telRegex = /^\+?[0-9\s\-()]{6,20}$/;
+                if (!inputTelefono.value.trim()) {
+                    mostrarError(inputTelefono, errorTelefono, "El número de teléfono es obligatorio.");
+                    esValido = false;
+                } else if (!telRegex.test(inputTelefono.value.trim())) {
+                    mostrarError(inputTelefono, errorTelefono, "Ingresa un número de teléfono válido.");
+                    esValido = false;
+                }
+
+                if (esValido) {
+                    const nombre = inputNombre.value.trim();
+                    const correo = inputCorreo.value.trim();
+                    const direccion = inputDireccion.value.trim();
+                    const telefono = inputTelefono.value.trim();
+
+                    const escapeCSV = (val) => {
+                        let cleaned = val.replace(/"/g, '""');
+                        if (cleaned.includes(',') || cleaned.includes('\n') || cleaned.includes('"')) {
+                            return `"${cleaned}"`;
+                        }
+                        return cleaned;
+                    };
+
+                    const encabezados = ["Nombre completo", "Correo electronico", "Direccion", "Numero de telefono"];
+                    const datos = [escapeCSV(nombre), escapeCSV(correo), escapeCSV(direccion), escapeCSV(telefono)];
+                    const csvContenido = "\uFEFF" + encabezados.join(",") + "\n" + datos.join(",");
+
+                    const blob = new Blob([csvContenido], { type: "text/csv;charset=utf-8;" });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", "datos_registro.csv");
+                    link.style.visibility = "hidden";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    setTimeout(() => {
+                        window.location.href = 'lobo.html';
+                    }, 500);
+                } else {
+                    const tarjeta = document.querySelector('.tarjeta-formulario');
+                    tarjeta.classList.add('sacudir');
+                    setTimeout(() => tarjeta.classList.remove('sacudir'), 500);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
